@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Harsh Industries Command Center</title>
 
 <style>
@@ -27,11 +28,33 @@
 
     input {
         width: 60%;
+        max-width: 700px;
         padding: 12px;
         border-radius: 10px;
         border: none;
         font-size: 16px;
         outline: none;
+    }
+
+    .top-actions {
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        background: #22c55e;
+        color: black;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    button:hover {
+        transform: scale(1.05);
+        background: #4ade80;
     }
 
     .container {
@@ -49,11 +72,16 @@
         transition: 0.3s;
         cursor: pointer;
         border: 1px solid rgba(255,255,255,0.1);
+        user-select: none;
     }
 
     .card:hover {
         transform: translateY(-5px) scale(1.03);
         background: rgba(255,255,255,0.1);
+    }
+
+    .card:active {
+        transform: scale(0.98);
     }
 
     .title {
@@ -66,26 +94,27 @@
         color: #cbd5f5;
     }
 
-    .top-actions {
-        text-align: center;
-        margin-top: 10px;
-    }
-
-    button {
-        padding: 10px 20px;
-        border: none;
-        border-radius: 8px;
-        background: #22c55e;
-        color: black;
-        font-weight: bold;
-        cursor: pointer;
-    }
-
     footer {
         text-align: center;
         padding: 15px;
         color: #94a3b8;
         font-size: 12px;
+    }
+
+    @media (max-width: 600px) {
+        header {
+            font-size: 22px;
+            padding: 20px 10px;
+        }
+
+        input {
+            width: 85%;
+        }
+
+        .container {
+            padding: 20px;
+            grid-template-columns: 1fr;
+        }
     }
 </style>
 </head>
@@ -93,89 +122,176 @@
 <body>
 
 <header>
-⚡ HARSH INDUSTRIES COMMAND CENTER
+    ⚡ HARSH INDUSTRIES COMMAND CENTER
 </header>
 
 <div class="search-box">
-<input type="text" id="search" placeholder="Search tools... (try typing 'inventory')" onkeyup="filterCards()">
+    <input
+        type="text"
+        id="search"
+        placeholder="Search tools... (try typing 'inventory')"
+        onkeyup="filterCards()"
+    >
 </div>
 
 <div class="top-actions">
-<button onclick="openAll()">🚀 Open All Tools</button>
+    <button type="button" onclick="openAll()">
+        🚀 Open All Tools
+    </button>
 </div>
 
 <div class="container" id="cards">
-    
 
-<div class="card" data-name="inventory stock sheet">
-    <div class="title">📦 Inventory Management (1)</div>
-    <div class="desc">Google Sheet for stock tracking</div>
-</div>
+    <div class="card" data-name="inventory stock sheet" data-index="0">
+        <div class="title">📦 Inventory Management (1)</div>
+        <div class="desc">Google Sheet for stock tracking</div>
+    </div>
 
-<div class="card" data-name="insurance calculator">
-    <div class="title">🛡 Insurance Calculator (2)</div>
-    <div class="desc">Calculate insurance value instantly</div>
-</div>
+    <div class="card" data-name="insurance calculator" data-index="1">
+        <div class="title">🛡 Insurance Calculator (2)</div>
+        <div class="desc">Calculate insurance value instantly</div>
+    </div>
 
-<div class="card" data-name="cost calculation barbed wire">
-    <div class="title">💰 Cost Calculation Suite (3)</div>
-    <div class="desc">Product costing tools</div>
-</div>
+    <div class="card" data-name="cost calculation barbed wire" data-index="2">
+        <div class="title">💰 Cost Calculation Suite (3)</div>
+        <div class="desc">Product costing tools</div>
+    </div>
 
-<div class="card" data-name="electricity bill power tracker">
-    <div class="title">⚡ Electricity Tracker (4)</div>
-    <div class="desc">Monitor power costs</div>
-</div>
-<div class="card" data-name="toolsvilla pnl profit loss">
-    <div class="title">📈 Toolsvilla PNL Sheet (5)</div>
-    <div class="desc">Track Toolsvilla profit & loss</div>
-</div>
+    <div class="card" data-name="electricity bill power tracker" data-index="3">
+        <div class="title">⚡ Electricity Tracker (4)</div>
+        <div class="desc">Monitor power costs</div>
+    </div>
+
+    <div class="card" data-name="toolsvilla pnl profit loss" data-index="4">
+        <div class="title">📈 Toolsvilla PNL Sheet (5)</div>
+        <div class="desc">Track Toolsvilla profit & loss</div>
+    </div>
+
 </div>
 
 <footer>
-© Harsh Industries | Elite Internal System
+    © Harsh Industries | Elite Internal System
 </footer>
 
 <script>
+
+/* =========================================
+   TOOL LINKS
+   ========================================= */
+
 const links = [
     "https://docs.google.com/spreadsheets/d/1x6kIjL_h771zBKPgu2IrDrZC8bm9OrOl_1D9BiTzEqM/edit?gid=1139777562#gid=1139777562",
+
     "https://harshlovescode.github.io/HARSHINSURANCECAL/",
+
     "https://harshlovescode.github.io/harshindustriesCP-calculator-/",
-    "https://docs.google.com/spreadsheets/d/1hJCJSiODz2Xw3oMOzBJe_1Dpno_JEIVLg-emlPDZBjY/edit?gid=0#gid=0"
+
+    "https://docs.google.com/spreadsheets/d/1hJCJSiODz2Xw3oMOzBJe_1Dpno_JEIVLg-emlPDZBjY/edit?gid=0#gid=0",
+
     "https://docs.google.com/spreadsheets/d/1UValY9sVHd2pe7ztNCUHSxUhCVYDaAizBQcyA8FUxjM/edit?usp=sharing"
 ];
 
+
+/* =========================================
+   GET ALL CARDS
+   ========================================= */
+
 const cards = document.querySelectorAll(".card");
 
-// Click open
-cards.forEach((card, index) => {
-    card.addEventListener("click", () => {
-        window.open(links[index], "_blank");
+
+/* =========================================
+   OPEN INDIVIDUAL TOOL
+   ========================================= */
+
+cards.forEach(card => {
+
+    card.addEventListener("click", function () {
+
+        const index = Number(this.dataset.index);
+
+        if (links[index]) {
+            window.open(links[index], "_blank", "noopener,noreferrer");
+        }
+
     });
+
 });
 
-// Search filter
+
+/* =========================================
+   SEARCH / FILTER
+   ========================================= */
+
 function filterCards() {
-    let input = document.getElementById("search").value.toLowerCase();
+
+    const searchText =
+        document.getElementById("search").value
+        .trim()
+        .toLowerCase();
+
     cards.forEach(card => {
-        let name = card.getAttribute("data-name");
-        card.style.display = name.includes(input) ? "block" : "none";
+
+        const name =
+            card.getAttribute("data-name").toLowerCase();
+
+        if (name.includes(searchText)) {
+            card.style.display = "block";
+        } else {
+            card.style.display = "none";
+        }
+
     });
+
 }
 
-// Open all tools
+
+/* =========================================
+   OPEN ALL TOOLS
+   ========================================= */
+
 function openAll() {
-    links.forEach(link => {
-        window.open(link, "_blank");
+
+    links.forEach((link, index) => {
+
+        setTimeout(() => {
+            window.open(link, "_blank");
+        }, index * 300);
+
     });
+
 }
 
-// Keyboard shortcuts
+
+/* =========================================
+   KEYBOARD SHORTCUTS
+   1 = Inventory
+   2 = Insurance
+   3 = Cost Calculator
+   4 = Electricity
+   5 = Toolsvilla PNL
+   ========================================= */
+
 document.addEventListener("keydown", function(e) {
-    if (e.key >= 1 && e.key <= links.length) {
-        window.open(links[e.key - 1], "_blank");
+
+    // Don't trigger shortcuts while typing in search
+    if (document.activeElement.id === "search") {
+        return;
     }
+
+    const key = Number(e.key);
+
+    if (key >= 1 && key <= links.length) {
+
+        window.open(
+            links[key - 1],
+            "_blank",
+            "noopener,noreferrer"
+        );
+
+    }
+
 });
+
 </script>
 
 </body>
