@@ -1,198 +1,709 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Harsh Industries Command Center</title>
+    <meta name="theme-color" content="#050505">
+    <title>Harsh Industries | Gotham Command Center</title>
 
     <style>
+        :root {
+            --bg: #030303;
+            --bg-2: #090909;
+            --panel: rgba(18, 18, 18, 0.82);
+            --panel-strong: rgba(24, 24, 24, 0.94);
+            --text: #f4f4f4;
+            --muted: #8d8d8d;
+            --line: rgba(255,255,255,0.10);
+            --gold: #d6aa27;
+            --gold-bright: #ffd84a;
+            --gold-soft: rgba(214, 170, 39, 0.18);
+            --green: #35d07f;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             margin: 0;
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #0f172a, #020617);
-            color: white;
+            min-height: 100vh;
+            font-family: "Segoe UI", Arial, sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 50% 8%, rgba(214,170,39,0.08), transparent 25%),
+                radial-gradient(circle at 80% 70%, rgba(255,255,255,0.025), transparent 28%),
+                linear-gradient(180deg, #080808 0%, #020202 70%, #000 100%);
+            overflow-x: hidden;
+        }
+
+        /* Gotham atmosphere */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0.28;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+            background-size: 44px 44px;
+            mask-image: linear-gradient(to bottom, black, transparent 86%);
+        }
+
+        /* Subtle rain / scan atmosphere */
+        body::after {
+            content: "";
+            position: fixed;
+            inset: -100%;
+            pointer-events: none;
+            opacity: 0.035;
+            background: repeating-linear-gradient(
+                115deg,
+                transparent 0px,
+                transparent 6px,
+                rgba(255,255,255,0.7) 7px,
+                transparent 8px,
+                transparent 18px
+            );
+            animation: rain 22s linear infinite;
+        }
+
+        @keyframes rain {
+            from { transform: translate3d(0, -2%, 0); }
+            to { transform: translate3d(8%, 8%, 0); }
+        }
+
+        .shell {
+            position: relative;
+            width: min(1200px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 28px 0 56px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 18px;
+            color: var(--muted);
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .brand-mark {
+            color: var(--gold);
+            font-weight: 800;
+        }
+
+        .system-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 12px rgba(53,208,127,0.8);
+            animation: pulse 1.8s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.45; transform: scale(0.85); }
         }
 
         header {
+            position: relative;
             text-align: center;
-            padding: 25px;
-            font-size: 30px;
-            font-weight: bold;
-            letter-spacing: 2px;
+            padding: 34px 24px 28px;
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            background: linear-gradient(180deg, rgba(18,18,18,0.92), rgba(7,7,7,0.82));
+            box-shadow: 0 20px 55px rgba(0,0,0,0.45);
+            overflow: hidden;
         }
 
-        .search-box {
+        header::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 320px;
+            height: 2px;
+            transform: translateX(-50%);
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            box-shadow: 0 0 22px rgba(214,170,39,0.55);
+        }
+
+        .signal {
+            display: inline-grid;
+            place-items: center;
+            width: 74px;
+            height: 74px;
+            margin-bottom: 16px;
+            color: var(--gold-bright);
+            border: 1px solid rgba(214,170,39,0.4);
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(214,170,39,0.15), rgba(214,170,39,0.03));
+            box-shadow: inset 0 0 20px rgba(214,170,39,0.08), 0 0 35px rgba(214,170,39,0.10);
+            font-size: 31px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(27px, 5vw, 48px);
+            line-height: 1.05;
+            letter-spacing: 4px;
+            font-weight: 800;
+        }
+
+        .subtitle {
+            margin-top: 12px;
+            color: var(--muted);
+            font-size: 12px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .command-strip {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .command-stat {
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: rgba(255,255,255,0.025);
+            padding: 10px 12px;
             text-align: center;
-            margin: 20px;
+        }
+
+        .command-stat strong {
+            display: block;
+            color: var(--gold-bright);
+            font-size: 17px;
+            letter-spacing: 1px;
+        }
+
+        .command-stat span {
+            display: block;
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 9px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .search-panel {
+            margin: 22px 0 16px;
+            position: relative;
+        }
+
+        .search-wrap {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid rgba(214,170,39,0.24);
+            border-radius: 15px;
+            background: rgba(12,12,12,0.92);
+            padding: 4px 5px 4px 15px;
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.025) inset;
+            transition: 0.25s ease;
+        }
+
+        .search-wrap:focus-within {
+            border-color: rgba(255,216,74,0.6);
+            box-shadow: 0 0 24px rgba(214,170,39,0.10), inset 0 0 0 1px rgba(255,216,74,0.08);
+        }
+
+        .search-icon {
+            color: var(--gold);
+            font-size: 18px;
         }
 
         input {
-            width: 60%;
-            max-width: 700px;
-            padding: 12px;
-            border-radius: 10px;
+            flex: 1;
+            min-width: 0;
+            padding: 14px 6px;
             border: none;
-            font-size: 16px;
             outline: none;
+            background: transparent;
+            color: var(--text);
+            font-size: 15px;
+        }
+
+        input::placeholder {
+            color: #666;
+        }
+
+        .shortcut {
+            color: #6e6e6e;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 5px 8px;
+            font-size: 10px;
+            letter-spacing: 1px;
         }
 
         .top-actions {
-            text-align: center;
-            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 15px 0 6px;
         }
 
         button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            background: #22c55e;
-            color: black;
-            font-weight: bold;
+            appearance: none;
+            border: 1px solid rgba(255,216,74,0.35);
+            border-radius: 10px;
+            padding: 12px 19px;
+            background: linear-gradient(180deg, #deb22f, #b68716);
+            color: #050505;
+            font-weight: 800;
+            font-size: 12px;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
             cursor: pointer;
-            transition: 0.2s;
+            box-shadow: 0 7px 20px rgba(0,0,0,0.3), 0 0 0 rgba(214,170,39,0);
+            transition: 0.22s ease;
         }
 
         button:hover {
-            transform: scale(1.05);
-            background: #4ade80;
+            transform: translateY(-2px);
+            background: linear-gradient(180deg, #ffe26e, #d7a81e);
+            box-shadow: 0 10px 28px rgba(0,0,0,0.38), 0 0 24px rgba(214,170,39,0.20);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .section-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 28px 0 14px;
+            color: #777;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+        }
+
+        .section-label::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--line), transparent);
         }
 
         .container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            padding: 40px;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.05);
+            position: relative;
+            min-height: 174px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: linear-gradient(145deg, rgba(23,23,23,0.94), rgba(9,9,9,0.82));
             backdrop-filter: blur(10px);
-            padding: 25px;
-            border-radius: 15px;
-            transition: 0.3s;
             cursor: pointer;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
             user-select: none;
+            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(214,170,39,0.32), transparent);
+        }
+
+        .card::after {
+            content: "";
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(214,170,39,0.12), transparent 68%);
+            opacity: 0;
+            transition: opacity 0.25s ease;
         }
 
         .card:hover {
-            transform: translateY(-5px) scale(1.03);
-            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-6px);
+            border-color: rgba(255,216,74,0.34);
+            background: linear-gradient(145deg, rgba(28,28,28,0.98), rgba(11,11,11,0.92));
+            box-shadow: 0 18px 40px rgba(0,0,0,0.44), 0 0 30px rgba(214,170,39,0.075);
+        }
+
+        .card:hover::after {
+            opacity: 1;
         }
 
         .card:active {
-            transform: scale(0.98);
+            transform: translateY(-2px) scale(0.99);
+        }
+
+        .card-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .tool-icon {
+            width: 46px;
+            height: 46px;
+            display: grid;
+            place-items: center;
+            border: 1px solid rgba(214,170,39,0.23);
+            border-radius: 12px;
+            background: rgba(214,170,39,0.055);
+            color: var(--gold-bright);
+            font-size: 21px;
+            box-shadow: inset 0 0 18px rgba(214,170,39,0.04);
+        }
+
+        .number {
+            color: #5d5d5d;
+            font-family: Consolas, monospace;
+            font-size: 11px;
+            letter-spacing: 1px;
         }
 
         .title {
-            font-size: 20px;
-            margin-bottom: 8px;
+            margin-top: 17px;
+            font-size: 16px;
+            line-height: 1.35;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
 
         .desc {
-            font-size: 14px;
-            color: #cbd5f5;
+            margin-top: 6px;
+            color: #888;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .access {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            margin-top: 16px;
+            color: var(--gold);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.8px;
+            text-transform: uppercase;
+        }
+
+        .access::before {
+            content: "";
+            width: 18px;
+            height: 1px;
+            background: currentColor;
+            box-shadow: 0 0 7px currentColor;
+        }
+
+        .empty-state {
+            display: none;
+            grid-column: 1 / -1;
+            padding: 42px 20px;
+            text-align: center;
+            border: 1px dashed var(--line);
+            border-radius: 18px;
+            color: #666;
+        }
+
+        .gotham-line {
+            height: 55px;
+            margin-top: 36px;
+            border-top: 1px solid rgba(214,170,39,0.14);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gotham-line::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 54px;
+            opacity: 0.5;
+            background:
+                linear-gradient(to top, rgba(0,0,0,0.9), transparent),
+                linear-gradient(120deg,
+                    transparent 0 9%, #090909 9% 12%, transparent 12% 15%,
+                    #080808 15% 22%, transparent 22% 26%, #0a0a0a 26% 31%,
+                    transparent 31% 35%, #070707 35% 43%, transparent 43% 47%,
+                    #090909 47% 54%, transparent 54% 58%, #080808 58% 66%,
+                    transparent 66% 72%, #0a0a0a 72% 81%, transparent 81% 86%,
+                    #070707 86% 92%, transparent 92%);
+            clip-path: polygon(0 100%, 0 70%, 5% 70%, 7% 40%, 11% 40%, 13% 67%, 18% 67%, 20% 23%, 23% 23%, 25% 58%, 30% 58%, 32% 35%, 37% 35%, 39% 64%, 44% 64%, 46% 18%, 50% 18%, 52% 53%, 57% 53%, 59% 28%, 63% 28%, 66% 63%, 71% 63%, 73% 15%, 77% 15%, 79% 56%, 83% 56%, 86% 30%, 90% 30%, 92% 62%, 97% 62%, 100% 48%, 100% 100%);
         }
 
         footer {
-            text-align: center;
-            padding: 15px;
-            color: #94a3b8;
-            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            color: #5e5e5e;
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding-top: 2px;
         }
 
-        @media (max-width: 600px) {
-            header {
-                font-size: 22px;
-                padding: 20px 10px;
+        .footer-right {
+            color: var(--gold);
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 620px) {
+            .shell {
+                width: min(100% - 20px, 1200px);
+                padding-top: 16px;
             }
 
-            input {
-                width: 85%;
+            .topbar {
+                font-size: 9px;
+                letter-spacing: 1.3px;
+            }
+
+            header {
+                padding: 28px 16px 22px;
+                border-radius: 19px;
+            }
+
+            h1 {
+                font-size: 25px;
+                letter-spacing: 2.5px;
+            }
+
+            .subtitle {
+                font-size: 9px;
+                letter-spacing: 2.3px;
+            }
+
+            .command-strip {
+                grid-template-columns: 1fr;
             }
 
             .container {
-                padding: 20px;
                 grid-template-columns: 1fr;
+            }
+
+            .card {
+                min-height: 155px;
+            }
+
+            .shortcut {
+                display: none;
+            }
+
+            footer {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* Reduced-motion accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
             }
         }
     </style>
 </head>
 
 <body>
+<div class="shell">
 
-<header>
-    ⚡ HARSH INDUSTRIES COMMAND CENTER
-</header>
+    <div class="topbar">
+        <div class="brand-mark">⚡ HARSH INDUSTRIES</div>
+        <div class="system-status">
+            <span class="status-dot"></span>
+            SYSTEM ONLINE
+        </div>
+    </div>
 
-<div class="search-box">
-    <input
-        type="text"
-        id="search"
-        placeholder="Search tools... (try typing 'inventory')"
-        onkeyup="filterCards()"
-    >
+    <header>
+        <div class="signal">🦇</div>
+        <h1>COMMAND CENTER</h1>
+        <div class="subtitle">Gotham Operations // Internal Business Systems</div>
+
+        <div class="command-strip">
+            <div class="command-stat">
+                <strong>06</strong>
+                <span>Active Tools</span>
+            </div>
+            <div class="command-stat">
+                <strong>24/7</strong>
+                <span>System Access</span>
+            </div>
+            <div class="command-stat">
+                <strong>SECURE</strong>
+                <span>Internal Console</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="search-panel">
+        <div class="search-wrap">
+            <span class="search-icon">⌕</span>
+            <input
+                type="text"
+                id="search"
+                placeholder="Search command tools... e.g. inventory, parcha, insurance"
+                autocomplete="off"
+                onkeyup="filterCards()"
+            >
+            <span class="shortcut">SEARCH</span>
+        </div>
+    </div>
+
+    <div class="top-actions">
+        <button type="button" onclick="openAll()">🚀 Open All Tools</button>
+    </div>
+
+    <div class="section-label">Operational Modules</div>
+
+    <div class="container" id="cards">
+
+        <!-- TOOL 1 -->
+        <div class="card" data-name="inventory stock sheet management" data-index="0" tabindex="0" role="button" aria-label="Open Inventory Management">
+            <div>
+                <div class="card-top">
+                    <div class="tool-icon">📦</div>
+                    <div class="number">MODULE 01</div>
+                </div>
+                <div class="title">Inventory Management</div>
+                <div class="desc">Google Sheet for stock tracking and inventory control.</div>
+            </div>
+            <div class="access">ACCESS MODULE</div>
+        </div>
+
+        <!-- TOOL 2 -->
+        <div class="card" data-name="insurance calculator insurance value" data-index="1" tabindex="0" role="button" aria-label="Open Insurance Calculator">
+            <div>
+                <div class="card-top">
+                    <div class="tool-icon">🛡</div>
+                    <div class="number">MODULE 02</div>
+                </div>
+                <div class="title">Insurance Calculator</div>
+                <div class="desc">Calculate insurance value instantly with the dedicated calculator.</div>
+            </div>
+            <div class="access">ACCESS MODULE</div>
+        </div>
+
+        <!-- TOOL 3 -->
+        <div class="card" data-name="cost calculation cost calculator barbed wire product costing" data-index="2" tabindex="0" role="button" aria-label="Open Cost Calculation Suite">
+            <div>
+                <div class="card-top">
+                    <div class="tool-icon">💰</div>
+                    <div class="number">MODULE 03</div>
+                </div>
+                <div class="title">Cost Calculation Suite</div>
+                <div class="desc">Product costing tools for barbed wire and related calculations.</div>
+            </div>
+            <div class="access">ACCESS MODULE</div>
+        </div>
+
+        <!-- TOOL 4 -->
+        <div class="card" data-name="electricity bill power tracker electricity cost" data-index="3" tabindex="0" role="button" aria-label="Open Electricity Tracker">
+            <div>
+                <div class="card-top">
+                    <div class="tool-icon">⚡</div>
+                    <div class="number">MODULE 04</div>
+                </div>
+                <div class="title">Electricity Tracker</div>
+                <div class="desc">Monitor power costs and electricity-related operational data.</div>
+            </div>
+            <div class="access">ACCESS MODULE</div>
+        </div>
+
+        <!-- TOOL 5 -->
+        <div class="card" data-name="toolsvilla pnl profit loss ecommerce" data-index="4" tabindex="0" role="button" aria-label="Open Toolsvilla PNL Sheet">
+            <div>
+                <div class="card-top">
+                    <div class="tool-icon">📈</div>
+                    <div class="number">MODULE 05</div>
+                </div>
+                <div class="title">Toolsvilla PNL Sheet</div>
+                <div class="desc">Track Toolsvilla profit and loss performance.</div>
+            </div>
+            <div class="access">ACCESS MODULE</div>
+        </div>
+
+        <!-- TOOL 6 -->
+        <div class="card" data-name="pre invoice receipt parcha maker parcha preinvoice bill receipt" data-index="5" tabindex="0" role="button" aria-label="Open Pre-Invoice Receipt Parcha Maker">
+            <div>
+                <div class="card-top">
+                    <div class="tool-icon">🧾</div>
+                    <div class="number">MODULE 06</div>
+                </div>
+                <div class="title">Pre-Invoice Receipt</div>
+                <div class="desc">Parcha Maker for creating pre-invoice receipts quickly.</div>
+            </div>
+            <div class="access">ACCESS MODULE</div>
+        </div>
+
+        <div class="empty-state" id="emptyState">
+            No command module found. Try another search term.
+        </div>
+    </div>
+
+    <div class="gotham-line"></div>
+
+    <footer>
+        <div>© Harsh Industries | Elite Internal System</div>
+        <div class="footer-right">GOTHAM CONSOLE // SECURE</div>
+    </footer>
+
 </div>
-
-<div class="top-actions">
-    <button type="button" onclick="openAll()">
-        🚀 Open All Tools
-    </button>
-</div>
-
-<div class="container" id="cards">
-
-    <!-- TOOL 1 -->
-    <div class="card" data-name="inventory stock sheet" data-index="0">
-        <div class="title">📦 Inventory Management (1)</div>
-        <div class="desc">Google Sheet for stock tracking</div>
-    </div>
-
-    <!-- TOOL 2 -->
-    <div class="card" data-name="insurance calculator" data-index="1">
-        <div class="title">🛡 Insurance Calculator (2)</div>
-        <div class="desc">Calculate insurance value instantly</div>
-    </div>
-
-    <!-- TOOL 3 -->
-    <div class="card" data-name="cost calculation barbed wire" data-index="2">
-        <div class="title">💰 Cost Calculation Suite (3)</div>
-        <div class="desc">Product costing tools</div>
-    </div>
-
-    <!-- TOOL 4 -->
-    <div class="card" data-name="electricity bill power tracker" data-index="3">
-        <div class="title">⚡ Electricity Tracker (4)</div>
-        <div class="desc">Monitor power costs</div>
-    </div>
-
-    <!-- TOOL 5 -->
-    <div class="card" data-name="toolsvilla pnl profit loss" data-index="4">
-        <div class="title">📈 Toolsvilla PNL Sheet (5)</div>
-        <div class="desc">Track Toolsvilla profit & loss</div>
-    </div>
-
-    <!-- TOOL 6 -->
-    <div class="card" data-name="pre invoice receipt parcha maker" data-index="5">
-        <div class="title">🧾 PRE-INVOICE RECEIPT (6)</div>
-        <div class="desc">Create pre-invoice receipts / parchas instantly</div>
-    </div>
-
-</div>
-
-<footer>
-    © Harsh Industries | Elite Internal System
-</footer>
 
 <script>
-
 /* =========================================
    TOOL LINKS
    ========================================= */
 
 const links = [
-
     // 1. Inventory Management
     "https://docs.google.com/spreadsheets/d/1x6kIjL_h771zBKPgu2IrDrZC8bm9OrOl_1D9BiTzEqM/edit?gid=1139777562#gid=1139777562",
 
@@ -212,127 +723,100 @@ const links = [
     "https://harshlovescode.github.io/Parchamaker/"
 ];
 
-
 /* =========================================
    GET ALL CARDS
    ========================================= */
 
 const cards = document.querySelectorAll(".card");
-
+const searchInput = document.getElementById("search");
+const emptyState = document.getElementById("emptyState");
 
 /* =========================================
    OPEN INDIVIDUAL TOOL
    ========================================= */
 
+function openTool(index) {
+    if (links[index]) {
+        window.open(links[index], "_blank", "noopener,noreferrer");
+    }
+}
+
 cards.forEach(card => {
-
     card.addEventListener("click", function () {
-
-        const index = Number(this.dataset.index);
-
-        if (links[index]) {
-
-            window.open(
-                links[index],
-                "_blank",
-                "noopener,noreferrer"
-            );
-
-        }
-
+        openTool(Number(this.dataset.index));
     });
 
+    card.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            openTool(Number(this.dataset.index));
+        }
+    });
 });
-
 
 /* =========================================
    SEARCH / FILTER
    ========================================= */
 
 function filterCards() {
-
-    const searchText =
-        document.getElementById("search").value
-        .trim()
-        .toLowerCase();
+    const searchText = searchInput.value.trim().toLowerCase();
+    let visibleCount = 0;
 
     cards.forEach(card => {
+        const name = card.getAttribute("data-name").toLowerCase();
+        const matched = name.includes(searchText);
 
-        const name =
-            card.getAttribute("data-name").toLowerCase();
+        card.style.display = matched ? "flex" : "none";
 
-        if (name.includes(searchText)) {
-
-            card.style.display = "block";
-
-        } else {
-
-            card.style.display = "none";
-
+        if (matched) {
+            visibleCount++;
         }
-
     });
 
+    emptyState.style.display = visibleCount === 0 ? "block" : "none";
 }
-
 
 /* =========================================
    OPEN ALL TOOLS
    ========================================= */
 
 function openAll() {
-
     links.forEach((link, index) => {
-
         setTimeout(() => {
-
-            window.open(
-                link,
-                "_blank"
-            );
-
-        }, index * 300);
-
+            window.open(link, "_blank", "noopener,noreferrer");
+        }, index * 250);
     });
-
 }
-
 
 /* =========================================
    KEYBOARD SHORTCUTS
-
    1 = Inventory
    2 = Insurance
    3 = Cost Calculator
    4 = Electricity
    5 = Toolsvilla PNL
    6 = Parcha Maker
-
    ========================================= */
 
 document.addEventListener("keydown", function(e) {
-
-    // Don't trigger shortcuts while typing in search
-    if (document.activeElement.id === "search") {
+    // Don't trigger numeric shortcuts while typing in search.
+    if (document.activeElement === searchInput) {
+        // Escape clears the search box for convenience.
+        if (e.key === "Escape") {
+            searchInput.value = "";
+            filterCards();
+            searchInput.blur();
+        }
         return;
     }
 
     const key = Number(e.key);
 
     if (key >= 1 && key <= links.length) {
-
-        window.open(
-            links[key - 1],
-            "_blank",
-            "noopener,noreferrer"
-        );
-
+        openTool(key - 1);
     }
-
 });
-
 </script>
 
 </body>
 </html>
-```
